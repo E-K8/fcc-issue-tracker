@@ -6,6 +6,7 @@ const server = require('../server');
 chai.use(chaiHttp);
 
 let id1 = '';
+let id2 = '';
 
 suite('Functional Tests', function () {
   suite('POST /api/issues/{project} => object with issue data', function () {
@@ -35,6 +36,32 @@ suite('Functional Tests', function () {
           console.log('id 1 has been set as ' + id1);
           done();
         });
+    });
+
+    test('Required fields filled in', function (done) {
+      chai
+        .request(server)
+        .post('/api/issues/test')
+        .send({
+          issue_title: 'Title',
+          issue_text: 'text',
+          created_by: 'Functional Test - Required fields filled in',
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.body.issue_title, 'Title');
+          assert.equal(res.body.issue_text, 'text');
+          assert.equal(
+            res.body.created_by,
+            'Functional Test - Required fields filled in'
+          );
+          assert.equal(res.body.assigned_to, '');
+          assert.equal(res.body.status_text, '');
+          assert.equal(res.body.project, 'test');
+          id2 = res.body.id;
+          console.log('id 2 has been set as ' + id2);
+        });
+      done();
     });
   });
 });
