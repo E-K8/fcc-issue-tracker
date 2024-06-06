@@ -63,5 +63,18 @@ suite('Functional Tests', function () {
         });
       done();
     });
+
+    test('Missing required fields', function (done) {
+      chai
+        .request(server)
+        .post('/api/issues/test')
+        .send({
+          issue_title: 'Title',
+        })
+        .end(function (err, res) {
+          assert.equal(res.body, 'Required fields missing from request');
+          done();
+        });
+    });
   });
 });
