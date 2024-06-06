@@ -34,8 +34,8 @@ suite('Functional Tests', function () {
           assert.equal(res.body.project, 'test');
           id1 = res.body.id;
           console.log('id 1 has been set as ' + id1);
-          done();
         });
+      done();
     });
 
     test('Required fields filled in', function (done) {
@@ -73,6 +73,19 @@ suite('Functional Tests', function () {
         })
         .end(function (err, res) {
           assert.equal(res.body, 'Required fields missing from request');
+          done();
+        });
+    });
+  });
+
+  suite('PUT /api/issues/{project} => text', function () {
+    test('No body', function (done) {
+      chai
+        .request(server)
+        .put('/api/issues/test')
+        .send({})
+        .end(function (err, res) {
+          assert.equal(res.body, 'No updated field sent');
           done();
         });
     });

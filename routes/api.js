@@ -63,6 +63,28 @@ module.exports = function (app) {
 
     .put(function (req, res) {
       let project = req.params.project;
+      let updateObject = {};
+      Object.keys(req.body).forEach((key) => {
+        if (req.doby[key] != '') {
+          updateObject[key] = req.body[key];
+        }
+      });
+      if (Object.keys(updateObject).length < 2) {
+        return res.json('No updated field sent');
+      }
+      updateObject['updated_on'] = new Date().toUTCString();
+      Issue.findByIdAndUpdate(
+        req.body._id,
+        updateObject,
+        { new: true },
+        (error, updatedIssue) => {
+          if (!error && updatedIssue) {
+            return res.json('successfully updated');
+          } else if (!updatedIssue) {
+            return res.json('could not update ' + req.body._id);
+          }
+        }
+      );
     })
 
     .delete(function (req, res) {
