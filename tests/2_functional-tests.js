@@ -34,8 +34,8 @@ suite('Functional Tests', function () {
           assert.equal(res.body.project, 'test');
           id1 = res.body.id;
           console.log('id 1 has been set as ' + id1);
+          done();
         });
-      done();
     });
 
     test('Required fields filled in', function (done) {
@@ -115,6 +115,41 @@ suite('Functional Tests', function () {
         })
         .end(function (err, res) {
           assert.equal(res.body, 'sussessfully updated');
+          done();
+        });
+    });
+  });
+
+  suite('DELETE /api/issues/{project} => text', function () {
+    test('No _id', function (done) {
+      chai
+        .request(server)
+        .delete('/api/issues/test')
+        .send({})
+        .end(function (err, res) {
+          assert.equal(res.body, 'id error');
+          done();
+        });
+    });
+
+    test('Valid id', function (done) {
+      chai
+        .request(server)
+        .delete('/api/issues/test')
+        .send({
+          _id: id1,
+        })
+        .end(function (err, res) {
+          assert.equal(res.body, 'deleted ' + id1);
+        });
+      chai
+        .request(server)
+        .delete('/api/issues/test')
+        .send({
+          _id: id2,
+        })
+        .end(function (err, res) {
+          assert.equal(res.body, 'deleted ' + id2);
           done();
         });
     });
