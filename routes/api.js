@@ -65,7 +65,7 @@ module.exports = function (app) {
       let project = req.params.project;
       let updateObject = {};
       Object.keys(req.body).forEach((key) => {
-        if (req.doby[key] != '') {
+        if (req.body[key] != '') {
           updateObject[key] = req.body[key];
         }
       });

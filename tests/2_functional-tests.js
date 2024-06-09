@@ -89,5 +89,34 @@ suite('Functional Tests', function () {
           done();
         });
     });
+
+    test('One field to update', function (done) {
+      chai
+        .request(server)
+        .put('/api/issues/test')
+        .send({
+          _id: id1,
+          issue_text: 'new text',
+        })
+        .end(function (err, res) {
+          assert.equal(res.body, 'successfully updated');
+          done();
+        });
+    });
+
+    test('Multiple fields to update', function (done) {
+      chai
+        .request(server)
+        .put('/api/issues/test')
+        .send({
+          _id: id2,
+          issue_title: 'new title',
+          issue_text: 'new text',
+        })
+        .end(function (err, res) {
+          assert.equal(res.body, 'sussessfully updated');
+          done();
+        });
+    });
   });
 });
