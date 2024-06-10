@@ -31,6 +31,14 @@ module.exports = function (app) {
 
     .get(function (req, res) {
       let project = req.params.project;
+      let filterObject = Object.assign(req.query);
+      filterObject['project'] = project;
+
+      Issue.find(filterObject, (error, arrayOfResults) => {
+        if (!error && arrayOfResults) {
+          return res.json(arrayOfResults);
+        }
+      });
     })
 
     .post(function (req, res) {

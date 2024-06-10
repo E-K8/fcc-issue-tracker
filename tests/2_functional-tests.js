@@ -154,4 +154,42 @@ suite('Functional Tests', function () {
         });
     });
   });
+
+  suite('GET /api/issues/{project} => filter', function () {
+    test('One filter', function (done) {
+      chai
+        .request(server)
+        .get('/api/issues/test')
+        .query({ created_by: 'Functional Test - Every field filled in' })
+        .end(function (err, res) {
+          res.body.forEach((issueResult) => {
+            assert.equal(
+              issueResult.created_by,
+              'Functional Test - Every field filled in'
+            );
+          });
+          done();
+        });
+    });
+
+    test('Multiple filters (test for multiple fields you know will be in the db for a return)', function (done) {
+      chai
+        .request(server)
+        .get('/api/issues/test')
+        .query({
+          open: true,
+          created_by: 'Functional Test - Every field filled in',
+        })
+        .end(function (err, res) {
+          res.body.forEach((issueResult) => {
+            assert.equal(issueResult.open, true);
+            assert.equal(
+              issueResult.created_by,
+              'Functional Test - Every field filled in'
+            );
+          });
+          done();
+        });
+    });
+  });
 });
