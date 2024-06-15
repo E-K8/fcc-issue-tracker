@@ -11,9 +11,15 @@ const issueSchema = new mongoose.Schema({
   open: { type: Boolean, required: true },
   created_on: { type: Date, required: true },
   updated_on: { type: Date, required: true },
-  project: String,
 });
 
 const Issue = mongoose.model('Issue', issueSchema);
 
-const projectSchema = new Schema({});
+const projectSchema = new Schema({
+  name: { type: String, required: true },
+});
+
+const Project = mongoose.model('Project', projectSchema);
+
+exports.Issue = Issue;
+exports.Project = Project;

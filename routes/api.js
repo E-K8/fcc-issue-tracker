@@ -3,6 +3,9 @@
 const expect = require('chai').expect;
 const mongodb = require('mongodb');
 
+const IssueModel = require('../models').Issue;
+const ProjectModel = require('../models').Project;
+
 module.exports = function (app) {
   app
     .route('/api/issues/:project')
@@ -19,8 +22,10 @@ module.exports = function (app) {
       });
     })
 
-    .post(function (req, res) {
-      let project = req.params.project;
+    .post(async function (req, res) {
+      let projectName = req.params.project;
+      const { issue_title, issue_text, created_by, assigned_to, status_text } =
+        req.body;
       if (
         !req.body.issue_title ||
         !req.body.issue_text ||
@@ -28,23 +33,30 @@ module.exports = function (app) {
       ) {
         return res.json('Required fields missing from request');
       }
-
-      let newIssue = new Issue({
-        issue_title: req.body.issue_title,
-        issue_text: req.body.issue_text,
-        created_by: req.body.created_by,
-        assigned_to: req.body.assigned_to || '',
-        status_text: req.body.status_text || '',
-        open: true,
-        created_on: new Date().toUTCString(),
-        updated_on: new Date().toUTCString(),
-        project: project,
-      });
-      newIssue.save((error, savedIssue) => {
-        if (!error && savedIssue) {
-          return res.json(savedIssue);
+      try {
+        let projectModel = await ProjectModel.findOne({ name: projectName });
+        if (!projectModel) {
+          projectModel = new ProjectModel({ name: projectName });
+          projectModel = await projectModel.save();
         }
-      });
+        const issueModel = new IssueModel({
+          projectId: projectModel._id,
+          issue_title: issue_title || '',
+          issue_text: issue_text || '',
+          created_by: created_by || '',
+          assigned_to: assigned_to || '',
+          status_text: status_text || '',
+          open: true,
+          created_on: new Date(),
+          updated_on: new Date(),
+        });
+        const issue = await issueModel.save();
+        res.json(issue);
+      } catch (error) {
+        res
+          .status(500)
+          .json({ error: 'An error occurred while processing your request' });
+      }
     })
 
     .put(function (req, res) {
