@@ -10,16 +10,26 @@ module.exports = function (app) {
   app
     .route('/api/issues/:project')
 
-    .get(function (req, res) {
-      let project = req.params.project;
-      let filterObject = Object.assign(req.query);
-      filterObject['project'] = project;
+    .get(async function (req, res) {
+      let projectName = req.params.project;
 
-      Issue.find(filterObject, (error, arrayOfResults) => {
-        if (!error && arrayOfResults) {
-          return res.json(arrayOfResults);
+      try {
+        const project = await ProjectModel.findOne({ name: projectName });
+        if (!project) {
+          return res.json([{ error: 'Project not found' }]);
+        } else {
+          const issues = await IssueModel.find({
+            projectId: project._id,
+            ...req.query,
+          });
+          if (!issues) {
+            return res.json([{ error: 'No issues found' }]);
+          }
+          return res.json(issues);
         }
-      });
+      } catch (error) {
+        res.json({ error: 'Could not get', _id: _id });
+      }
     })
 
     .post(async function (req, res) {
