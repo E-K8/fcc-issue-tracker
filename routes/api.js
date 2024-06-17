@@ -63,36 +63,53 @@ module.exports = function (app) {
         const issue = await issueModel.save();
         res.json(issue);
       } catch (error) {
-        res
-          .status(500)
-          .json({ error: 'An error occurred while processing your request' });
+        res.status(500).json({
+          error: 'An error occurred while processing your request',
+          _id: _id,
+        });
       }
     })
 
-    .put(function (req, res) {
-      let project = req.params.project;
-      let updateObject = {};
-      Object.keys(req.body).forEach((key) => {
-        if (req.body[key] != '') {
-          updateObject[key] = req.body[key];
-        }
-      });
-      if (Object.keys(updateObject).length < 2) {
-        return res.json('No updated field sent');
+    .put(async function (req, res) {
+      let projectName = req.params.project;
+      const {
+        issue_title,
+        issue_text,
+        created_by,
+        assigned_to,
+        status_text,
+        open,
+      } = req.body;
+
+      if (!_id) {
+        return res.json({ error: 'Missing _id' });
       }
-      updateObject['updated_on'] = new Date().toUTCString();
-      Issue.findByIdAndUpdate(
-        req.body._id,
-        updateObject,
-        { new: true },
-        (error, updatedIssue) => {
-          if (!error && updatedIssue) {
-            return res.json('successfully updated');
-          } else if (!updatedIssue) {
-            return res.json('could not update ' + req.body._id);
-          }
+      if (
+        !issue_title &&
+        !issue_text &&
+        !created_by &&
+        !assigned_to &&
+        !status_text &&
+        !open
+      ) {
+        return res.json({ error: 'No update field(s) sent', _id: _id });
+      }
+
+      try {
+        const projectModel = await ProjectModel.findOne({ name: projectName });
+        if (!projectModel) {
+          throw new Error('Project not found');
         }
-      );
+
+        let issue = await IssueModel.findByIdAndUpdate(_id, {
+          ...req.body,
+          updated_on: new Date(),
+        });
+        await issue.save();
+        res.json({ result: 'successfully updated', _id: _id });
+      } catch (error) {
+        res.json({ error: 'Could not update', _id: _id });
+      }
     })
 
     .delete(function (req, res) {
