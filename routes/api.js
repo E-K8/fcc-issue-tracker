@@ -121,17 +121,29 @@ module.exports = function (app) {
       }
     })
 
-    .delete(function (req, res) {
-      let project = req.params.project;
-      if (!req.body._id) {
-        return res.json('id error');
+    .delete(async function (req, res) {
+      let projectName = req.params.project;
+      const { _id } = req.body;
+
+      if (!_id) {
+        return res.json({ error: 'missing _id' });
       }
-      Issue.findByIdAndDelete(req.body._id, (error, deletedIssue) => {
-        if (!error && deletedIssue) {
-          res.json('deleted ' + deletedIssue.id);
-        } else if (!deletedIssue) {
-          res.json('could not delete ' + req.body._id);
+
+      try {
+        const projectModel = await ProjectModel.findOne({ name: projectName });
+        if (!projectModel) {
+          throw new Error('project not found');
         }
-      });
+        const result = await IssueModel.deleteOne({
+          _id: _id,
+          projectId: projectModel._id,
+        });
+        if (result.deletedCount === 0) {
+          throw new Error('ID not found');
+        }
+        res.json({ result: 'successfully deleted', _id: _id });
+      } catch (error) {
+        res.json({ error: 'could not delete', _id: _id });
+      }
     });
 };
