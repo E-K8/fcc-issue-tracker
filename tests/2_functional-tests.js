@@ -77,6 +77,25 @@ suite('Functional Tests', function () {
             assert.equal(issue2.status_text, '');
             done();
           });
+      }).timeout(5000);
+
+      test('Create an issue with missing required fields: POST request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .post('/api/issues/test')
+          .set('content-type', 'application/json')
+          .send({
+            issue_title: '',
+            issue_text: '',
+            created_by: 'Kate',
+            assigned_to: '',
+            status_text: '',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'required field(s) missing');
+            done();
+          });
       });
     });
   });
