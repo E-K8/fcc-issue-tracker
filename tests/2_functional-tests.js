@@ -50,6 +50,33 @@ suite('Functional Tests', function () {
             assert.equal(res.body.status_text, 'In QA');
             done();
           });
+      }).timeout(10000);
+
+      test('Create an issue with only required fields: POST request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .post('/api/issues/test')
+          .set('content-type', 'application/json')
+          .send({
+            issue_title: 'Issue two',
+            issue_text: 'Functional Test - Required fields',
+            created_by: 'Kate',
+            assigned_to: '',
+            status_text: '',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            issue2 = res.body;
+            assert.equal(issue2.issue_title, 'Issue two');
+            assert.equal(
+              issue2.issue_text,
+              'Functional Test - Required fields'
+            );
+            assert.equal(issue2.created_by, 'Kate');
+            assert.equal(issue2.assigned_to, '');
+            assert.equal(issue2.status_text, '');
+            done();
+          });
       });
     });
   });
