@@ -1,9 +1,59 @@
-// const chaiHttp = require('chai-http');
-// const chai = require('chai');
-// const assert = chai.assert;
-// const server = require('../server');
+const chaiHttp = require('chai-http');
+const chai = require('chai');
+const assert = chai.assert;
+const server = require('../server');
 
-// chai.use(chaiHttp);
+chai.use(chaiHttp);
+
+let issue1;
+let issue2;
+
+// Create an issue with every field: POST request to /api/issues/{project}
+// Create an issue with only required fields: POST request to /api/issues/{project}
+// Create an issue with missing required fields: POST request to /api/issues/{project}
+// View issues on a project: GET request to /api/issues/{project}
+// View issues on a project with one filter: GET request to /api/issues/{project}
+// View issues on a project with multiple filters: GET request to /api/issues/{project}
+// Update one field on an issue: PUT request to /api/issues/{project}
+// Update multiple fields on an issue: PUT request to /api/issues/{project}
+// Update an issue with missing _id: PUT request to /api/issues/{project}
+// Update an issue with no fields to update: PUT request to /api/issues/{project}
+// Update an issue with an invalid _id: PUT request to /api/issues/{project}
+// Delete an issue: DELETE request to /api/issues/{project}
+// Delete an issue with an invalid _id: DELETE request to /api/issues/{project}
+// Delete an issue with missing _id: DELETE request to /api/issues/{project}
+
+suite('Functional Tests', function () {
+  suite('Routing tests', function () {
+    suite('POST request tests', function () {
+      test('Create an issue with every field: POST request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .post('/api/issues/test')
+          .send({
+            issue_title: 'Issue one',
+            issue_text: 'Functional Test - Every field filled in',
+            created_by: 'Kate',
+            assigned_to: 'Liz',
+            status_text: 'In QA',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            issue1 = res.body;
+            assert.equal(res.body.issue_title, 'Issue one');
+            assert.equal(
+              res.body.issue_text,
+              'Functional Test - Every field filled in'
+            );
+            assert.equal(res.body.created_by, 'Kate');
+            assert.equal(res.body.assigned_to, 'Liz');
+            assert.equal(res.body.status_text, 'In QA');
+            done();
+          });
+      });
+    });
+  });
+});
 
 // let id1 = '';
 // let id2 = '';
