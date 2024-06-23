@@ -11,9 +11,11 @@ let issue2;
 // Create an issue with every field: POST request to /api/issues/{project}
 // Create an issue with only required fields: POST request to /api/issues/{project}
 // Create an issue with missing required fields: POST request to /api/issues/{project}
+
 // View issues on a project: GET request to /api/issues/{project}
 // View issues on a project with one filter: GET request to /api/issues/{project}
 // View issues on a project with multiple filters: GET request to /api/issues/{project}
+
 // Update one field on an issue: PUT request to /api/issues/{project}
 // Update multiple fields on an issue: PUT request to /api/issues/{project}
 // Update an issue with missing _id: PUT request to /api/issues/{project}
@@ -94,6 +96,49 @@ suite('Functional Tests', function () {
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'required field(s) missing');
+            done();
+          });
+      });
+    });
+
+    suite('GET request tests', function () {
+      test('View issues on a project: GET request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .get('/api/issues/test')
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            done();
+          });
+      });
+
+      test('View issues on a project with one filter: GET request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .get('/api/issues/test')
+          .query({
+            _id: issue1._id,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body[0].issue_title, issue1.issue_title);
+            assert.equal(res.body[0].issue_text, issue1.issue_text);
+          });
+        done();
+      });
+
+      test('View issues on a project with multiple filters: GET request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .get('/api/issues/test')
+          .query({
+            issue_title: issue1.issue_title,
+            issue_text: issue1.issue_text,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body[0].issue_title, issue1.issue_title);
+            assert.equal(res.body[0].issue_text, issue1.issue_text);
             done();
           });
       });
@@ -276,15 +321,15 @@ suite('Functional Tests', function () {
 //           open: true,
 //           created_by: 'Functional Test - Every field filled in',
 //         })
-//         .end(function (err, res) {
-//           res.body.forEach((issueResult) => {
-//             assert.equal(issueResult.open, true);
-//             assert.equal(
-//               issueResult.created_by,
-//               'Functional Test - Every field filled in'
-//             );
-//           });
-//           done();
+// .end(function (err, res) {
+//   res.body.forEach((issueResult) => {
+//     assert.equal(issueResult.open, true);
+//     assert.equal(
+//       issueResult.created_by,
+//       'Functional Test - Every field filled in'
+//     );
+//   });
+//   done();
 //         });
 //     });
 //   });
