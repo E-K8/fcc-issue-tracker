@@ -192,6 +192,20 @@ suite('Functional Tests', function () {
             done();
           });
       });
+
+      test('Update an issue with no fields to update: PUT request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .put('/api/issues/test')
+          .send({
+            _id: issue1._id,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'no update field(s) sent');
+            done();
+          });
+      });
     });
   });
 });
