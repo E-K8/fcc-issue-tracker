@@ -177,6 +177,21 @@ suite('Functional Tests', function () {
             done();
           });
       });
+
+      test('Update an issue with missing _id: PUT request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .put('/api/issues/test')
+          .send({
+            issue_title: 'updated this',
+            issue_text: 'updated that',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'missing _id');
+            done();
+          });
+      });
     });
   });
 });
