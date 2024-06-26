@@ -160,6 +160,23 @@ suite('Functional Tests', function () {
             done();
           });
       });
+
+      test('Update multiple fields on an issue: PUT request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .put('/api/issues/test')
+          .send({
+            _id: issue1._id,
+            issue_title: 'let us update this title',
+            issue_text: 'let us update this text',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.result, 'successfully updated');
+            assert.equal(res.body._id, issue1._id);
+            done();
+          });
+      });
     });
   });
 });
