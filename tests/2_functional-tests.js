@@ -206,6 +206,22 @@ suite('Functional Tests', function () {
             done();
           });
       });
+
+      test('Update an issue with an invalid _id: PUT request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .put('/api/issues/test')
+          .send({
+            _id: '666dfb1b7a25cceaadf0d123',
+            issue_title: 'update with invalid',
+            issue_text: 'update with invalid',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'could not update');
+            done();
+          });
+      });
     });
   });
 });
