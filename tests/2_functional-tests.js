@@ -21,6 +21,7 @@ let issue2;
 // Update an issue with missing _id: PUT request to /api/issues/{project}
 // Update an issue with no fields to update: PUT request to /api/issues/{project}
 // Update an issue with an invalid _id: PUT request to /api/issues/{project}
+
 // Delete an issue: DELETE request to /api/issues/{project}
 // Delete an issue with an invalid _id: DELETE request to /api/issues/{project}
 // Delete an issue with missing _id: DELETE request to /api/issues/{project}
@@ -221,6 +222,33 @@ suite('Functional Tests', function () {
             assert.equal(res.body.error, 'could not update');
             done();
           });
+      });
+    });
+
+    suite('DELETE requests', function () {
+      test('Delete an issue: DELETE request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .delete('/api/issues/test')
+          .send({
+            _id: issue1._id,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.result, 'successfully deleted');
+          });
+
+        chai
+          .request(server)
+          .delete('/api/issues/test')
+          .send({
+            _id: issue2._id,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.result, 'successfully deleted');
+          });
+        done();
       });
     });
   });
