@@ -264,6 +264,18 @@ suite('Functional Tests', function () {
             done();
           });
       });
+
+      test('Delete an issue with missing _id: DELETE request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .delete('/api/issues/test')
+          .send({})
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'missing _id');
+            done();
+          });
+      });
     });
   });
 });
