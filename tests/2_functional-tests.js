@@ -250,6 +250,20 @@ suite('Functional Tests', function () {
           });
         done();
       });
+
+      test('Delete an issue with an invalid _id: DELETE request to /api/issues/{project}', function (done) {
+        chai
+          .request(server)
+          .delete('/api/issues/test')
+          .send({
+            _id: 'err9c8f672cc6536905003e1',
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.body.error, 'could not delete');
+            done();
+          });
+      });
     });
   });
 });
