@@ -1,10 +1,17 @@
 * {
   margin: 0px;
   padding: 0px;
+  font-family: 'Roboto', sans-serif;
+  background-color: rgb(200, 222, 209);
 }
 
 body {
   padding: 10px;
+}
+
+.forms-container {
+  display: flex;
+  gap: 3rem;
 }
 
 .issue {
@@ -20,4 +27,17 @@ body {
 
 .id {
   font-size: 10.5px;
+}
+
+input {
+  background-color: white;
+}
+
+textarea {
+  background-color: white;
+}
+
+button {
+  color: white;
+  background-color: rgb(53, 87, 88);
 }
