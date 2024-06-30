@@ -1,8 +1,4 @@
 'use strict';
-
-const expect = require('chai').expect;
-const mongodb = require('mongodb');
-
 const IssueModel = require('../models').Issue;
 const ProjectModel = require('../models').Project;
 
